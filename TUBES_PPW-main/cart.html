@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Furniture App - Keranjang</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="./css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Cart Page / Keranjang -->
+    <div class="page active" id="cartPage">
+        <div class="cart-container">
+            <!-- Header -->
+            <header class="cart-header">
+                <button class="back-btn" onclick="location.href='home.html'">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2>Keranjang Belanja</h2>
+                <div style="width: 40px;"></div> <!-- Spacer untuk balance -->
+            </header>
+
+            <!-- Cart Items -->
+            <div class="cart-content">
+                <div class="cart-items">
+                    <!-- Cart items will be loaded dynamically -->
+                </div>
+
+                <!-- Voucher Section -->
+                <div class="voucher-section" onclick="showNotification('Fitur voucher akan segera hadir!')">
+                    <i class="fas fa-tag"></i>
+                    <span>Gunakan Voucher</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+
+                <!-- Summary Section -->
+                <div class="cart-summary">
+                    <h3>Ringkasan Belanja</h3>
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span class="subtotal">Rp 0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Biaya Pengiriman</span>
+                        <span class="shipping">Rp 15.000</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Diskon</span>
+                        <span class="discount">- Rp 0</span>
+                    </div>
+                    <hr>
+                    <div class="summary-row total">
+                        <span>Total</span>
+                        <span class="total">Rp 15.000</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Checkout Button -->
+            <div class="cart-footer">
+                <div class="select-all">
+                    <input type="checkbox" id="selectAll" checked>
+                    <label for="selectAll">Pilih Semua</label>
+                </div>
+                <button class="btn-checkout">
+                    <span>Checkout</span>
+                    <span class="checkout-total">Rp 0</span>
+                </button>
+            </div>
+
+            <!-- Bottom Navigation -->
+            <nav class="bottom-nav">
+                <button class="nav-item" onclick="location.href='home.html'">
+                    <i class="fas fa-home"></i>
+                    <span>Beranda</span>
+                </button>
+                <button class="nav-item">
+                    <i class="fas fa-search"></i>
+                    <span>Cari</span>
+                </button>
+                <button class="nav-item active">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Keranjang</span>
+                </button>
+                <button class="nav-item">
+                    <i class="fas fa-user"></i>
+                    <span>Profil</span>
+                </button>
+            </nav>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="./js/main.js"></script>
+    <script src="./js/cart.js"></script>
+</body>
+</html>
