@@ -3,43 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Furniture App - Selamat Datang</title>
+    <title>A Mitra Furniture - Furniture Terlengkap</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
+    <link href="./css/style.css" rel="stylesheet">
 </head>
 <body>
-    <div class="page active" id="welcomePage">
-        <div class="welcome-container">
-            <div class="logo-icon">
-                <i class="fas fa-couch"></i>
-            </div>
-            <h1 class="welcome-title">
-                Aplikasi jual beli furniture<br>
-                terlengkap dan terbaik<br>
-                di Indonesia
-            </h1>
-            <div class="furniture-showcase">
-                <div class="furniture-item">
-                    <i class="fas fa-chair" style="font-size: 3rem; color: #8B4513;"></i>
-                </div>
-                <div class="furniture-item">
-                    <i class="fas fa-door-open" style="font-size: 3rem; color: #D2B48C;"></i>
-                </div>
-                <div class="furniture-item">
-                    <i class="fas fa-bed" style="font-size: 3rem; color: #CD853F;"></i>
-                </div>
-                <div class="furniture-item">
-                    <i class="fas fa-table" style="font-size: 3rem; color: #A0522D;"></i>
+    <!-- Welcome Page dengan Slideshow -->
+    <div class="welcome-page">
+        <!-- Header -->
+        <header class="welcome-header">
+            <div class="container">
+                <div class="header-content">
+                    <h1 class="logo">A Mitra Furniture.</h1>
+                    <nav class="header-nav">
+                        <a href="#" class="nav-link">Home</a>
+                        <a href="#" class="nav-link">Produk</a>
+                        <a href="#" class="nav-link">Kategori</a>
+                        <a href="#" class="nav-link">Kontak</a>
+                    </nav>
+                    <div class="header-actions">
+                        <button class="btn-login" onclick="location.href='login.html'">Login</button>
+                    </div>
                 </div>
             </div>
-            <button class="btn-start" onclick="location.href='login.html'">Mulai</button>
-            <div class="login-link">
-                Sudah punya akun? <a href="login.html">Masuk</a>
+        </header>
+
+        <!-- Hero Slideshow -->
+        <section class="hero-slideshow">
+            <div class="slides-container">
+                <!-- Slide 1 -->
+                <div class="slide active">
+                    <div class="slide-content">
+                        <div class="slide-text">
+                            <h2 class="slide-title">Season Sale</h2>
+                            <h1 class="slide-main-title">FURNITURE MODERN</h1>
+                            <p class="slide-discount">Min. 35-70% Off</p>
+                            <div class="slide-actions">
+                                <button class="btn-shop" onclick="location.href='home.html'">BELANJA SEKARANG</button>
+                                <button class="btn-read">BACA SELENGKAPNYA</button>
+                            </div>
+                        </div>
+                        <div class="slide-image">
+                            <div class="furniture-showcase">
+                                <div class="furniture-item large">
+                                    <i class="fas fa-couch"></i>
+                                </div>
+                                <div class="furniture-item medium">
+                                    <i class="fas fa-chair"></i>
+                                </div>
+                                <div class="furniture-item small">
+                                    <i class="fas fa-table"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 2 -->
+                <div class="slide">
+                    <div class="slide-content">
+                        <div class="slide-text">
+                            <h2 class="slide-title">New Collection</h2>
+                            <h1 class="slide-main-title">FURNITURE MINIMALIS</h1>
+                            <p class="slide-discount">Desain Elegan & Modern</p>
+                            <div class="slide-actions">
+                                <button class="btn-shop" onclick="location.href='home.html'">LIHAT KOLEKSI</button>
+                                <button class="btn-read">EXPLORE</button>
+                            </div>
+                        </div>
+                        <div class="slide-image">
+                            <div class="furniture-showcase">
+                                <div class="furniture-item large">
+                                    <i class="fas fa-bed"></i>
+                                </div>
+                                <div class="furniture-item medium">
+                                    <i class="fas fa-door-open"></i>
+                                </div>
+                                <div class="furniture-item small">
+                                    <i class="fas fa-lightbulb"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 3 -->
+                <div class="slide">
+                    <div class="slide-content">
+                        <div class="slide-text">
+                            <h2 class="slide-title">Premium Quality</h2>
+                            <h1 class="slide-main-title">KAYU ALAMI</h1>
+                            <p class="slide-discount">100% Material Terbaik</p>
+                            <div class="slide-actions">
+                                <button class="btn-shop" onclick="location.href='home.html'">BELI SEKARANG</button>
+                                <button class="btn-read">DETAIL PRODUK</button>
+                            </div>
+                        </div>
+                        <div class="slide-image">
+                            <div class="furniture-showcase">
+                                <div class="furniture-item large">
+                                    <i class="fas fa-tree"></i>
+                                </div>
+                                <div class="furniture-item medium">
+                                    <i class="fas fa-chair-office"></i>
+                                </div>
+                                <div class="furniture-item small">
+                                    <i class="fas fa-cube"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+
+            <!-- Slide Indicators -->
+            <div class="slide-indicators">
+                <button class="indicator active" data-slide="0"></button>
+                <button class="indicator" data-slide="1"></button>
+                <button class="indicator" data-slide="2"></button>
+            </div>
+
+            <!-- Slide Navigation -->
+            <button class="slide-nav prev">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="slide-nav next">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-section">
+            <div class="container">
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shipping-fast"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Gratis Pengiriman</h3>
+                            <p>Untuk pembelian di atas Rp 2.000.000</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Garansi 2 Tahun</h3>
+                            <p>Garansi resmi untuk semua produk</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Support 24/7</h3>
+                            <p>Customer service siap membantu</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-undo-alt"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Return 30 Hari</h3>
+                            <p>Kembalikan produk dengan mudah</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Footer -->
+        <footer class="welcome-footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-brand">
+                        <h2>A Mitra Furniture.</h2>
+                        <p>Platform jual beli furniture terlengkap dan terbaik di Indonesia</p>
+                    </div>
+                    <div class="footer-actions">
+                        <button class="btn-start" onclick="location.href='login.html'">Mulai Belanja</button>
+                        <div class="login-link">
+                            Sudah punya akun? <a href="login.html">Login</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
     </div>
 
-    <script src="js/main.js"></script>
+    <script src="./js/welcome.js"></script>
 </body>
 </html>
