@@ -5,7 +5,7 @@ const products = {
             id: 1,
             name: 'Kursi Goyang',
             price: 1450000,
-            image: 'https://via.placeholder.com/300x300?text=Kursi+Goyang',
+            image: 'assets/images/kursigoyang.jpeg',
             category: 'kursi',
             popular: true,
             recommended: true
@@ -14,7 +14,7 @@ const products = {
             id: 2,
             name: 'Kursi Santai',
             price: 750000,
-            image: 'https://via.placeholder.com/300x300?text=Kursi+Santai',
+            image: 'assets/images/kursisantai.jpeg',
             category: 'kursi',
             popular: true,
             recommended: true
@@ -23,7 +23,7 @@ const products = {
             id: 3,
             name: 'Ranjang Susun Tingkat',
             price: 2850000,
-            image: 'https://via.placeholder.com/300x300?text=Ranjang+Susun',
+            image: 'assets/images/ranjangsusun.jpeg',
             category: 'ranjang',
             popular: false,
             recommended: true
@@ -32,7 +32,7 @@ const products = {
             id: 4,
             name: 'Ranjang Modern',
             price: 3950000,
-            image: 'https://via.placeholder.com/300x300?text=Ranjang+Modern',
+            image: 'assets/images/ranjang minimalis.jpeg',
             category: 'ranjang',
             popular: true,
             recommended: false
@@ -41,7 +41,7 @@ const products = {
             id: 5,
             name: 'Laci Modern Retro',
             price: 1350000,
-            image: 'https://via.placeholder.com/300x300?text=Laci+Retro',
+            image: 'assets/images/laci meja.jpg',
             category: 'meja',
             popular: true,
             recommended: true
