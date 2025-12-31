@@ -3,71 +3,125 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Midtrans\Config;
+use Midtrans\Snap;
 
 class OrderController extends Controller
 {
+    /* ==============================
+       HALAMAN CHECKOUT
+    ============================== */
     public function checkout()
     {
-        $cart = session()->get('cart', []);
-        if (empty($cart)) {
-            return redirect('/keranjang')->with('error', 'Keranjang kosong');
-        }
-
-        $items = Product::whereIn('id', array_keys($cart))->get();
-        return view('orders.checkout', compact('items', 'cart'));
+        return view('checkout');
     }
 
-    public function store(Request $request)
+    /* ==============================
+       PROSES PEMBAYARAN
+    ============================== */
+    public function pay(Request $request, $id)
     {
-        $validated = $request->validate([
-            'alamat' => 'required|string',
-            'nomor_telepon' => 'required|string',
-            'metode_pembayaran' => 'required|in:transfer,cod'
-        ]);
+        $user = Auth::user();
+        $product = Product::findOrFail($id);
 
-        $cart = session()->get('cart', []);
-        $total = 0;
-
+        // Buat order
         $order = Order::create([
-            'user_id' => Auth::id(),
-            'alamat' => $validated['alamat'],
-            'nomor_telepon' => $validated['nomor_telepon'],
-            'metode_pembayaran' => $validated['metode_pembayaran'],
-            'status' => 'pending'
+            'user_id' => $user->id,
+            'product_id' => $product->id,
+            'order_code' => 'ORD-' . time(),
+            'total_price' => $product->price,
+            'payment_method' => 'midtrans',
+            'payment_status' => 'pending',
+            'status' => 'pending',
         ]);
 
-        foreach ($cart as $productId => $item) {
-            $product = Product::find($productId);
-            $subtotal = $product->price * $item['quantity'];
-            $total += $subtotal;
+        // Konfigurasi Midtrans
+        Config::$serverKey = config('services.midtrans.server_key');
+        Config::$isProduction = false;
+        Config::$isSanitized = true;
+        Config::$is3ds = true;
 
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $productId,
-                'quantity' => $item['quantity'],
-                'price' => $product->price
-            ]);
+        $params = [
+            'transaction_details' => [
+                'order_id' => $order->order_code,
+                'gross_amount' => (int) $order->total_price,
+            ],
+            'customer_details' => [
+                'first_name' => $user->name,
+                'email' => $user->email,
+            ],
+        ];
+
+        $snapToken = Snap::getSnapToken($params);
+
+        $order->update([
+            'snap_token' => $snapToken
+        ]);
+
+        return response()->json([
+            'snap_token' => $snapToken,
+            'order_id' => $order->id
+        ]);
+    }
+
+    /* ==============================
+       CALLBACK MIDTRANS
+    ============================== */
+    public function callback(Request $request)
+    {
+        $serverKey = config('services.midtrans.server_key');
+
+        $signature = hash(
+            "sha512",
+            $request->order_id .
+            $request->status_code .
+            $request->gross_amount .
+            $serverKey
+        );
+
+        if ($signature !== $request->signature_key) {
+            return response()->json(['message' => 'Invalid signature'], 403);
         }
 
-        $order->update(['total' => $total]);
-        session()->forget('cart');
+        $order = Order::where('order_code', $request->order_id)->first();
 
-        return redirect("/pesanan/{$order->id}")->with('success', 'Pesanan berhasil dibuat');
+        if ($order) {
+            if ($request->transaction_status == 'settlement') {
+                $order->update([
+                    'payment_status' => 'paid',
+                    'status' => 'paid'
+                ]);
+            }
+        }
+
+        return response()->json(['status' => 'success']);
     }
 
+    /* ==============================
+       HALAMAN BERHASIL
+    ============================== */
+    public function paymentSuccess($order)
+    {
+        $order = Order::findOrFail($order);
+        return view('payment-success', compact('order'));
+    }
+
+    /* ==============================
+       LIST ORDER USER
+    ============================== */
     public function index()
-    {
-        $orders = Auth::user()->orders()->latest()->paginate(10);
-        return view('orders.index', compact('orders'));
-    }
+{
+    $orders = Order::where('user_id', Auth::id())->latest()->get();
+    return view('dashboard.order-history', compact('orders'));
+}
 
-    public function show($id)
+
+    public function show(Order $order)
     {
-        $order = Order::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
         return view('orders.show', compact('order'));
     }
 }

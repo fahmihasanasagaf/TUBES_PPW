@@ -1,12 +1,9 @@
 <?php
 
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
 {
@@ -14,25 +11,23 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
-        'alamat',
-        'nomor_telepon',
-        'metode_pembayaran',
+        'product_id',
+        'quantity',
+        'total_price',
+        'payment_method',
+        'bank',
+        'ewallet',
         'status',
-        'total',
+        'snap_token', // 👈 Tambahkan ini
     ];
 
-    protected $casts = [
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-    ];
-
-    public function user(): BelongsTo
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function items(): HasMany
+    public function product()
     {
-        return $this->hasMany(OrderItem::class);
+        return $this->belongsTo(Product::class);
     }
 }

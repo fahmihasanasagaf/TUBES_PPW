@@ -7,6 +7,23 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('resources/css/style.css') }}">
+    <style>
+        .product-card-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            transition: transform 0.2s;
+        }
+        .product-card-link:hover {
+            transform: translateY(-5px);
+        }
+        .card {
+            transition: box-shadow 0.2s;
+        }
+        .card:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 <body>
     <!-- Header/Navbar -->
@@ -54,13 +71,20 @@
         </div>
     </nav>
 
-    <div id="home-screen" class="screen active">
+    <div id="home-screen" class="screen active" style="margin-bottom: 80px;">
         <div class="container py-4">
             
             {{-- Alert Messages --}}
             @if(session('success'))
                 <div class="alert alert-success alert-dismissible fade show">
                     {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="alert alert-danger alert-dismissible fade show">
+                    {{ session('error') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             @endif
@@ -79,7 +103,7 @@
             <!-- Category Icons -->
             <div class="row mb-4">
                 <div class="col-3 text-center">
-                    <a href="{{ route('home', ['category' => 'Kursi']) }}" class="text-decoration-none text-dark">
+                    <a href="{{ route('category.show', 'Kursi') }}" class="text-decoration-none text-dark">
                         <div class="category-icon">
                             <i class="fas fa-chair fa-lg"></i>
                         </div>
@@ -87,7 +111,7 @@
                     </a>
                 </div>
                 <div class="col-3 text-center">
-                    <a href="{{ route('home', ['category' => 'Sofa']) }}" class="text-decoration-none text-dark">
+                    <a href="{{ route('category.show', 'Sofa') }}" class="text-decoration-none text-dark">
                         <div class="category-icon">
                             <i class="fas fa-couch fa-lg"></i>
                         </div>
@@ -95,7 +119,7 @@
                     </a>
                 </div>
                 <div class="col-3 text-center">
-                    <a href="{{ route('home', ['category' => 'Meja']) }}" class="text-decoration-none text-dark">
+                    <a href="{{ route('category.show', 'Meja') }}" class="text-decoration-none text-dark">
                         <div class="category-icon">
                             <i class="fas fa-table fa-lg"></i>
                         </div>
@@ -103,7 +127,7 @@
                     </a>
                 </div>
                 <div class="col-3 text-center">
-                    <a href="{{ route('home', ['category' => 'Lemari']) }}" class="text-decoration-none text-dark">
+                    <a href="{{ route('category.show', 'Lemari') }}" class="text-decoration-none text-dark">
                         <div class="category-icon">
                             <i class="fas fa-door-open fa-lg"></i>
                         </div>
@@ -162,27 +186,33 @@
                     @foreach($products as $product)
                         <div class="col-6 col-md-3 mb-4">
                             <div class="card h-100">
-                                {{-- Tampilkan Gambar --}}
-                                @if($product->image)
-                                    <img src="{{ asset($product->image) }}" 
-                                         class="card-img-top" 
-                                         alt="{{ $product->name }}"
-                                         style="height: 200px; object-fit: cover;">
-                                @else
-                                    <img src="https://via.placeholder.com/200?text=No+Image" 
-                                         class="card-img-top" 
-                                         alt="No Image"
-                                         style="height: 200px; object-fit: cover;">
-                                @endif
+                                {{-- Link ke detail produk pada gambar --}}
+                                <a href="{{ route('products.detail', $product->id) }}" class="product-card-link">
+                                    @if($product->image)
+                                        <img src="{{ asset($product->image) }}" 
+                                             class="card-img-top" 
+                                             alt="{{ $product->name }}"
+                                             style="height: 200px; object-fit: cover;">
+                                    @else
+                                        <img src="https://via.placeholder.com/200?text=No+Image" 
+                                             class="card-img-top" 
+                                             alt="No Image"
+                                             style="height: 200px; object-fit: cover;">
+                                    @endif
+                                </a>
                                 
                                 <div class="card-body">
-                                    <h6 class="card-title">{{ $product->name }}</h6>
+                                    {{-- Link ke detail produk pada title --}}
+                                    <a href="{{ route('products.detail', $product->id) }}" class="text-decoration-none text-dark">
+                                        <h6 class="card-title">{{ $product->name }}</h6>
+                                    </a>
                                     <p class="text-muted small">{{ $product->category }}</p>
                                     <p class="fw-bold text-primary">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
                                     
                                     @auth
                                         <form action="{{ route('cart.add', $product) }}" method="POST">
                                             @csrf
+                                            <input type="hidden" name="quantity" value="1">
                                             <button type="submit" class="btn btn-primary btn-sm w-100">
                                                 <i class="fas fa-cart-plus"></i> Tambah
                                             </button>

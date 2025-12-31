@@ -32,7 +32,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Kursi kerja dengan desain ergonomis untuk kenyamanan maksimal.',
                 'price' => 1500000,
                 'category' => 'Kursi',
-                'image' => 'assets/images/dan4.jpg',
+                'image' => 'assets/images/kursi kerja.jpg',
             ],
             [
                 'name' => 'Lemari Pakaian 3 Pintu',
@@ -59,36 +59,36 @@ class ProductSeeder extends Seeder
                 'image' => 'assets/images/Elbow Chair.jpeg',
             ],
             [
-                'name' => 'Meja Dana Minimalis',
-                'slug' => 'meja-dana-minimalis',
+                'name' => 'Meja Minimalis',
+                'slug' => 'meja-minimalis', // FIXED: menghapus spasi
                 'description' => 'Meja minimalis serbaguna untuk berbagai kebutuhan rumah atau kantor.',
                 'price' => 2500000,
                 'category' => 'Meja',
-                'image' => 'assets/images/Dana.png',
+                'image' => 'assets/images/meja minimalis.jpeg',
             ],
             [
-                'name' => 'Sofa BCA Series',
-                'slug' => 'sofa-bca-series',
+                'name' => 'Sofa Modern',
+                'slug' => 'sofa-modern',
                 'description' => 'Sofa modern dengan desain elegant dan material premium.',
                 'price' => 4500000,
                 'category' => 'Sofa',
-                'image' => 'assets/images/bca.png',
+                'image' => 'assets/images/dan7.jpg',
             ],
             [
-                'name' => 'Sofa BNI Collection',
-                'slug' => 'sofa-bni-collection',
+                'name' => 'Sofa Elegant',
+                'slug' => 'sofa-elegant', // FIXED: menambah nama yang lebih spesifik
                 'description' => 'Sofa nyaman dengan bahan berkualitas tinggi.',
                 'price' => 4200000,
                 'category' => 'Sofa',
-                'image' => 'assets/images/bni.png',
+                'image' => 'assets/images/dan8.png',
             ],
             [
-                'name' => 'Sofa BRI Premium',
-                'slug' => 'sofa-bri-premium',
-                'description' => 'Sofa premium dengan desain kontemporer untuk ruang keluarga.',
+                'name' => 'Ranjang Tingkat Kayu Modern',
+                'slug' => 'ranjang-tingkat-kayu-modern', // FIXED: huruf kecil semua
+                'description' => 'Ranjang tingkat dari kayu modern yang kuat dan tahan lama.',
                 'price' => 4800000,
-                'category' => 'Sofa',
-                'image' => 'assets/images/bri.png',
+                'category' => 'Ranjang', // FIXED: kategori lebih sesuai
+                'image' => 'assets/images/dan3.jpg',
             ],
         ];
 

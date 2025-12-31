@@ -186,7 +186,6 @@ body {
     background-color: var(--secondary-blue);
     border-radius: 20px;
     padding: 16px;
-
     margin-bottom: 16px;
 }
 
@@ -203,85 +202,86 @@ body {
     border-radius: 8px;
     padding: 16px;
     margin-bottom: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* Payment Options Styling */
-.payment-options {
-    background-color: #f8f9fa;
-    border-radius: 12px;
-    padding: 15px;
-    border-left: 4px solid #2196F3;
-}
-
-.bank-option, .ewallet-option {
-    padding: 12px;
-    margin-bottom: 10px;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background-color: white;
-}
-
-.bank-option:hover, .ewallet-option:hover {
-    border-color: #2196F3;
-    background-color: #f0f8ff;
-    transform: translateY(-2px);
-}
-
-.bank-option.selected, .ewallet-option.selected {
-    border-color: #2196F3;
-    background-color: #e3f2fd;
-    box-shadow: 0 4px 8px rgba(33, 150, 243, 0.2);
-}
-
-.bank-logo, .ewallet-logo {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #2196F3, #21CBF3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-}
-
-.bank-logo i, .ewallet-logo i {
-    font-size: 1.2rem;
-}
-
-/* Payment Option Styling */
+/* Payment Options Styling - UPDATED */
 .payment-option {
+    background: white;
     padding: 15px;
-    border: 2px solid #e9ecef;
+    border: 2px solid #e0e0e0;
     border-radius: 12px;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s;
 }
 
 .payment-option:hover {
     border-color: #2196F3;
-    background-color: #f8f9fa;
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.1);
 }
 
 .payment-radio {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #ccc;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .payment-circle {
-    width: 20px;
-    height: 20px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
-    border: 2px solid #ccc;
-    transition: all 0.3s ease;
+    background: transparent;
+    transition: all 0.3s;
 }
 
-.payment-option.active .payment-circle {
+.payment-circle.active {
+    background: #2196F3;
+}
+
+.payment-options {
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    padding: 15px;
+    margin-top: 12px;
+}
+
+.bank-option, .ewallet-option {
+    background: white;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.bank-option:hover, .ewallet-option:hover {
+    background: #f0f8ff;
     border-color: #2196F3;
-    background-color: #2196F3;
+    transform: translateY(-2px);
+}
+
+.bank-option.selected, .ewallet-option.selected {
+    background: #e3f2fd;
+    border-color: #2196F3;
+    box-shadow: 0 4px 8px rgba(33, 150, 243, 0.2);
+}
+
+.bank-logo, .ewallet-logo {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #2196F3, #21CBF3);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
 }
 
 .profile-item {
@@ -535,52 +535,91 @@ body {
     }
 }
 
-/* Payment Account Styles */
-.payment-account-info {
-    padding: 15px 0;
-}
-
-.account-detail {
-    background-color: #f8f9fa;
-    padding: 12px;
-    border-radius: 8px;
-}
-
-.account-detail p {
-    margin-bottom: 5px;
-}
-
-.account-detail .form-control {
-    border: 2px solid #dee2e6;
-    font-weight: 500;
-}
-
-.account-detail .form-control:focus {
-    border-color: #86BBF9;
-    box-shadow: 0 0 0 0.2rem rgba(134, 187, 249, 0.25);
-}
-
-.btn-outline-primary {
-    border-color: #86BBF9;
-    color: #86BBF9;
-}
-
-.btn-outline-primary:hover {
-    background-color: #86BBF9;
-    border-color: #86BBF9;
-    color: white;
-}
-
+/* Payment Account Modal Styles */
 #paymentAccountModal .modal-content {
     border: none;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
 #paymentAccountModal .modal-header {
-    background-color: #f8f9fa;
-    border-bottom: 2px solid #dee2e6;
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+    border-bottom: none;
+    border-radius: 16px 16px 0 0;
+    padding: 20px;
+}
+
+#paymentAccountModal .modal-title {
+    font-weight: bold;
+    color: #000;
 }
 
 #paymentAccountModal .modal-body {
-    padding: 25px;
+    padding: 30px;
+}
+
+#paymentAccountModal .btn-close {
+    background-color: white;
+    opacity: 1;
+    border-radius: 50%;
+}
+
+#account-number {
+    user-select: all;
+    cursor: pointer;
+}
+
+#account-number:hover {
+    background-color: #f8f9fa;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.action-buttons {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    padding: 12px;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 10px;
+    z-index: 100;
+}
+
+.add-to-cart-btn {
+    flex: 1;
+    padding: 12px;
+    background: white;
+    border: 2px solid var(--dark-blue);
+    border-radius: 8px;
+    font-weight: 500;
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.add-to-cart-btn:hover {
+    background: var(--light-bg);
+}
+
+.buy-now-btn {
+    flex: 2;
+    padding: 12px;
+    background: var(--secondary-blue);
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    color: #000;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.buy-now-btn:hover {
+    background: var(--dark-blue);
 }
