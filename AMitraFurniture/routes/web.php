@@ -7,18 +7,26 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AdminProductController;
+use App\Http\Controllers\AdminOrderController;
+use App\Http\Controllers\AdminDashboardController;
 
-// ===============================
-// HOME
-// ===============================
+/*
+|--------------------------------------------------------------------------
+| HOME (USER)
+|--------------------------------------------------------------------------
+*/
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// ===============================
-// AUTH
-// ===============================
+/*
+|--------------------------------------------------------------------------
+| AUTH USER
+|--------------------------------------------------------------------------
+*/
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.store');
+
     Route::get('/register', [AuthController::class, 'registerForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register'])->name('register.store');
 });
@@ -27,17 +35,21 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->name('logout')
     ->middleware('auth');
 
-// ===============================
-// PRODUCT
-// ===============================
+/*
+|--------------------------------------------------------------------------
+| PRODUCT (USER)
+|--------------------------------------------------------------------------
+*/
 Route::get('/produk', [ProductController::class, 'index'])->name('products.index');
 Route::get('/produk/{slug}', [ProductController::class, 'show'])->name('products.show');
 Route::get('/kategori/{category}', [HomeController::class, 'category'])->name('category.show');
 Route::get('/produk/{id}/detail', [ProductController::class, 'detail'])->name('products.detail');
 
-// ===============================
-// CART
-// ===============================
+/*
+|--------------------------------------------------------------------------
+| CART
+|--------------------------------------------------------------------------
+*/
 Route::middleware('auth')->group(function () {
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
@@ -46,31 +58,27 @@ Route::middleware('auth')->group(function () {
     Route::delete('/cart/{cart}/destroy', [CartController::class, 'destroy'])->name('cart.destroy');
 });
 
-// ===============================
-// AUTH USER AREA
-// ===============================
+/*
+|--------------------------------------------------------------------------
+| USER AREA
+|--------------------------------------------------------------------------
+*/
 Route::middleware('auth')->group(function () {
 
-    // PROFILE
     Route::get('/profil', [ProfileController::class, 'show'])->name('profile.show');
     Route::patch('/profil', [ProfileController::class, 'update'])->name('profile.update');
 
-    // CHECKOUT
     Route::get('/checkout', [OrderController::class, 'checkout'])->name('orders.checkout');
     Route::get('/checkout/{id}', [ProductController::class, 'checkout'])->name('checkout.direct');
 
-    // ✅ PAYMENT (WAJIB ADA)
     Route::post('/checkout/{id}/pay', [OrderController::class, 'pay'])
         ->name('checkout.pay');
 
-    // OPTIONAL (kalau pakai form checkout biasa)
     Route::post('/checkout', [OrderController::class, 'store'])->name('orders.store');
 
-    // ORDER
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 
-    // PAYMENT RESULT
     Route::get('/payment/page/{order}', [OrderController::class, 'paymentPage'])
         ->name('payment.page');
 
@@ -78,8 +86,69 @@ Route::middleware('auth')->group(function () {
         ->name('payment.success');
 });
 
-// ===============================
-// MIDTRANS CALLBACK (NO AUTH)
-// ===============================
+/*
+|--------------------------------------------------------------------------
+| MIDTRANS CALLBACK
+|--------------------------------------------------------------------------
+*/
 Route::post('/payment/callback', [OrderController::class, 'callback'])
     ->name('payment.callback');
+
+/*
+|--------------------------------------------------------------------------
+| ================= ADMIN AREA =================
+|--------------------------------------------------------------------------
+| ADMIN TERPISAH & DIAMANKAN
+|--------------------------------------------------------------------------
+*/
+
+// LOGIN ADMIN
+Route::get('/admin/login', [AuthController::class, 'loginForm'])
+    ->name('admin.login');
+
+Route::post('/admin/login', [AuthController::class, 'login'])
+    ->name('admin.login.store');
+
+// ADMIN AREA
+Route::middleware(['auth', 'admin'])->group(function () {
+
+    // DASHBOARD + GRAFIK
+    Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])
+        ->name('admin.dashboard');
+
+    // PESANAN (UBAH STATUS)
+    Route::get('/admin/pesanan', [AdminOrderController::class, 'index'])
+        ->name('admin.pesanan.index');
+
+    Route::get('/admin/pesanan/{order}/edit', [AdminOrderController::class, 'edit'])
+        ->name('admin.pesanan.edit');
+
+    Route::put('/admin/pesanan/{order}', [AdminOrderController::class, 'update'])
+        ->name('admin.pesanan.update');
+
+    // PRODUK (CRUD + GAMBAR)
+    Route::get('/admin/produk', [AdminProductController::class, 'index'])
+        ->name('admin.produk.index');
+
+    Route::get('/admin/produk/create', [AdminProductController::class, 'create'])
+        ->name('admin.produk.create');
+
+    Route::post('/admin/produk', [AdminProductController::class, 'store'])
+        ->name('admin.produk.store');
+
+    Route::get('/admin/produk/{product}/edit', [AdminProductController::class, 'edit'])
+        ->name('admin.produk.edit');
+
+    Route::put('/admin/produk/{product}', [AdminProductController::class, 'update'])
+        ->name('admin.produk.update');
+
+    Route::delete('/admin/produk/{product}', [AdminProductController::class, 'destroy'])
+        ->name('admin.produk.destroy');
+
+    // PENGIRIMAN & NOTIFIKASI (UI)
+    Route::get('/admin/pengiriman', fn () => view('admin.pengiriman'))
+        ->name('admin.pengiriman');
+
+    Route::get('/admin/notifikasi', fn () => view('admin.notifikasi'))
+        ->name('admin.notifikasi');
+});
