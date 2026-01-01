@@ -261,7 +261,7 @@
                     </a>
                 </div>
                 <div class="col-3 bottom-nav-item">
-                    <a href="{{ auth()->check() ? '#' : route('login') }}" class="text-decoration-none text-dark">
+                    <a href="{{ auth()->check() ? route('profile.show') : route('login') }}" class="text-decoration-none text-dark">
                         <i class="fas fa-user"></i>
                         <div class="small">Profile</div>
                     </a>

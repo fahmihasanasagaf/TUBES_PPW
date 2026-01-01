@@ -121,8 +121,41 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function addToCart(productId) {
-            // Implementasi add to cart
-            document.getElementById('success-modal').style.display = 'flex';
+            // Kirim request ke server untuk menambahkan produk ke cart
+            fetch(`/cart/add/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+                credentials: 'same-origin', // PENTING: Kirim cookies session
+                body: JSON.stringify({
+                    quantity: 1
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    // Jika tidak terautentikasi, redirect ke login
+                    if (response.status === 401 || response.status === 419) {
+                        alert('Anda harus login terlebih dahulu!');
+                        window.location.href = '/login';
+                        return;
+                    }
+                    throw new Error('Gagal menambahkan produk');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data && data.success) {
+                    // Tampilkan modal sukses
+                    document.getElementById('success-modal').style.display = 'flex';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Gagal menambahkan produk ke keranjang. ' + error.message);
+            });
         }
 
         function buyNow(productId) {

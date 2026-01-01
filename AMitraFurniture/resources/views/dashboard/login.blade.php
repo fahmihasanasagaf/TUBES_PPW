@@ -43,7 +43,7 @@
                     @endif
                     
             
-                    <form action="{{ route('login') }}" method="POST">
+                    <form action="{{ route('login.store') }}" method="POST">
                         @csrf 
                         
                         <div class="mb-3">

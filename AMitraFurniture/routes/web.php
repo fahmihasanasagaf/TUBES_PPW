@@ -75,9 +75,11 @@ Route::middleware('auth')->group(function () {
         ->name('checkout.pay');
 
     Route::post('/checkout', [OrderController::class, 'store'])->name('orders.store');
+    Route::post('/checkout/direct', [OrderController::class, 'storeDirect'])->name('orders.storeDirect');
 
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::post('/orders/{order}/confirm-payment', [OrderController::class, 'confirmPayment'])->name('orders.confirmPayment');
 
     Route::get('/payment/page/{order}', [OrderController::class, 'paymentPage'])
         ->name('payment.page');
@@ -108,6 +110,13 @@ Route::get('/admin/login', [AuthController::class, 'loginForm'])
 
 Route::post('/admin/login', [AuthController::class, 'login'])
     ->name('admin.login.store');
+
+// REGISTER ADMIN
+Route::get('/admin/register', [AuthController::class, 'registerForm'])
+    ->name('admin.register');
+
+Route::post('/admin/register', [AuthController::class, 'register'])
+    ->name('admin.register.store');
 
 // ADMIN AREA
 Route::middleware(['auth', 'admin'])->group(function () {
@@ -146,7 +155,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
         ->name('admin.produk.destroy');
 
     // PENGIRIMAN & NOTIFIKASI (UI)
-    Route::get('/admin/pengiriman', fn () => view('admin.pengiriman'))
+    Route::get('/admin/pengiriman', [AdminOrderController::class, 'shipping'])
         ->name('admin.pengiriman');
 
     Route::get('/admin/notifikasi', fn () => view('admin.notifikasi'))

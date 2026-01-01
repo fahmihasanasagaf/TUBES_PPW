@@ -2,151 +2,244 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Checkout</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Beli Sekarang</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- MIDTRANS -->
-    <script src="https://app.sandbox.midtrans.com/snap/snap.js"
-        data-client-key="{{ config('services.midtrans.client_key') }}">
-    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-
 <body class="bg-light">
-
-<div class="container mt-5">
-    <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-            <h5>Checkout</h5>
-        </div>
-
-        <div class="card-body">
-
-            <p><b>Produk:</b> {{ $product->name }}</p>
-            <p><b>Harga:</b> Rp {{ number_format($product->price,0,',','.') }}</p>
-
-            <!-- METODE -->
-            <div class="mb-3">
-                <button class="btn btn-outline-primary" onclick="selectPayment('midtrans')">
-                    Midtrans
-                </button>
-
-                <button class="btn btn-outline-secondary" onclick="selectPayment('bank')">
-                    Transfer Bank
-                </button>
-
-                <button class="btn btn-outline-success" onclick="selectPayment('ewallet')">
-                    E-Wallet
-                </button>
-            </div>
-
-            <!-- BANK -->
-            <div id="bankBox" class="d-none">
-                <button class="btn btn-sm btn-outline-dark" onclick="showBank('BCA')">BCA</button>
-                <button class="btn btn-sm btn-outline-dark" onclick="showBank('BRI')">BRI</button>
-            </div>
-
-            <!-- EWALLET -->
-            <div id="ewalletBox" class="d-none">
-                <button class="btn btn-sm btn-outline-dark" onclick="showEwallet('OVO')">OVO</button>
-                <button class="btn btn-sm btn-outline-dark" onclick="showEwallet('GOPAY')">GOPAY</button>
-            </div>
-
-            <!-- INFO -->
-            <div id="infoBox" class="alert alert-info d-none mt-3"></div>
-
-            <button id="payBtn" class="btn btn-success w-100 mt-3">
-                Bayar Sekarang
+    <div class="container py-4">
+        <!-- Header -->
+        <div class="d-flex align-items-center mb-4">
+            <button class="btn btn-outline-secondary me-3" onclick="window.history.back()">
+                <i class="fas fa-arrow-left"></i>
             </button>
+            <h2 class="mb-0">Checkout</h2>
         </div>
+
+        @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        @endif
+
+        <form action="{{ route('orders.storeDirect') }}" method="POST" id="checkoutForm">
+            @csrf
+            <input type="hidden" name="product_id" value="{{ $product->id }}">
+            
+            <div class="row">
+                <!-- Left Column - Form -->
+                <div class="col-lg-7">
+                    <div class="card shadow-sm mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">
+                                <i class="fas fa-box-open text-primary"></i> Detail Produk
+                            </h5>
+                            
+                            <div class="d-flex gap-3 mb-4">
+                                <img src="{{ asset($product->image) }}" 
+                                     alt="{{ $product->name }}" 
+                                     class="rounded"
+                                     style="width: 100px; height: 100px; object-fit: cover;">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">{{ $product->name }}</h6>
+                                    <p class="text-muted mb-2">{{ Str::limit($product->description, 80) }}</p>
+                                    <p class="text-primary fw-bold mb-0">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+                                </div>
+                            </div>
+
+                            <!-- Quantity -->
+                            <div class="mb-3">
+                                <label class="form-label">Jumlah</label>
+                                <div class="input-group" style="width: 150px;">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="changeQuantity(-1)">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <input type="number" 
+                                           name="quantity" 
+                                           id="quantity" 
+                                           class="form-control text-center" 
+                                           value="1" 
+                                           min="1" 
+                                           max="{{ $product->stock }}"
+                                           readonly>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="changeQuantity(1)">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                                <small class="text-muted">Stok tersedia: {{ $product->stock }}</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alamat Pengiriman -->
+                    <div class="card shadow-sm mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">
+                                <i class="fas fa-map-marker-alt text-primary"></i> Alamat Pengiriman
+                            </h5>
+                            
+                            <div class="mb-3">
+                                <label for="alamat" class="form-label">Alamat Lengkap <span class="text-danger">*</span></label>
+                                <textarea class="form-control @error('alamat') is-invalid @enderror" 
+                                          id="alamat" 
+                                          name="alamat" 
+                                          rows="3" 
+                                          placeholder="Masukkan alamat lengkap..." 
+                                          required>{{ old('alamat') }}</textarea>
+                                @error('alamat')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="nomor_telepon" class="form-label">Nomor Telepon <span class="text-danger">*</span></label>
+                                <input type="tel" 
+                                       class="form-control @error('nomor_telepon') is-invalid @enderror" 
+                                       id="nomor_telepon" 
+                                       name="nomor_telepon" 
+                                       placeholder="08xx xxxx xxxx" 
+                                       value="{{ old('nomor_telepon') }}"
+                                       required>
+                                @error('nomor_telepon')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Metode Pembayaran -->
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">
+                                <i class="fas fa-credit-card text-primary"></i> Metode Pembayaran
+                            </h5>
+                            
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="radio" name="payment_method" id="cod" value="cod" checked>
+                                <label class="form-check-label d-flex align-items-center" for="cod">
+                                    <i class="fas fa-money-bill-wave text-success me-2"></i>
+                                    <div>
+                                        <strong>COD (Bayar di Tempat)</strong>
+                                        <div class="small text-muted">Bayar saat barang diterima</div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="radio" name="payment_method" id="transfer_bca" value="transfer_bca">
+                                <label class="form-check-label d-flex align-items-center" for="transfer_bca">
+                                    <i class="fas fa-university text-primary me-2"></i>
+                                    <div>
+                                        <strong>Transfer Bank BCA</strong>
+                                        <div class="small text-muted">Rek: 1234567890 - A Mitra Furniture</div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="radio" name="payment_method" id="transfer_bri" value="transfer_bri">
+                                <label class="form-check-label d-flex align-items-center" for="transfer_bri">
+                                    <i class="fas fa-university text-info me-2"></i>
+                                    <div>
+                                        <strong>Transfer Bank BRI</strong>
+                                        <div class="small text-muted">Rek: 9876543210 - A Mitra Furniture</div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment_method" id="transfer_mandiri" value="transfer_mandiri">
+                                <label class="form-check-label d-flex align-items-center" for="transfer_mandiri">
+                                    <i class="fas fa-university text-warning me-2"></i>
+                                    <div>
+                                        <strong>Transfer Bank Mandiri</strong>
+                                        <div class="small text-muted">Rek: 5555666677 - A Mitra Furniture</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column - Summary -->
+                <div class="col-lg-5">
+                    <div class="card shadow-sm sticky-top" style="top: 20px;">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">Ringkasan Pesanan</h5>
+                            
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Harga Satuan</span>
+                                <span id="unitPrice">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Jumlah</span>
+                                <span id="displayQuantity">1</span>
+                            </div>
+                            
+                            <hr>
+                            
+                            <div class="d-flex justify-content-between mb-3">
+                                <strong>Total</strong>
+                                <strong class="text-primary" id="totalPrice">Rp {{ number_format($product->price, 0, ',', '.') }}</strong>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100" id="submitBtn">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <span id="btnText">Buat Pesanan</span>
+                                <span id="btnLoading" class="spinner-border spinner-border-sm ms-2" style="display: none;"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
-</div>
 
-<script>
-let paymentMethod = '';
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const productPrice = {{ $product->price }};
+        const maxStock = {{ $product->stock }};
 
-function selectPayment(type) {
-    paymentMethod = type;
+        function changeQuantity(change) {
+            const quantityInput = document.getElementById('quantity');
+            let currentQuantity = parseInt(quantityInput.value);
+            let newQuantity = currentQuantity + change;
 
-    document.getElementById('bankBox').classList.add('d-none');
-    document.getElementById('ewalletBox').classList.add('d-none');
-    document.getElementById('infoBox').classList.add('d-none');
-
-    if (type === 'bank') document.getElementById('bankBox').classList.remove('d-none');
-    if (type === 'ewallet') document.getElementById('ewalletBox').classList.remove('d-none');
-}
-
-function showBank(bank) {
-    showInfo(`
-        <b>Transfer ${bank}</b><br>
-        Rek: <b>1234567890</b><br>
-        A/N: PT A Mitra Furniture
-    `);
-}
-
-function showEwallet(wallet) {
-    showInfo(`
-        <b>${wallet}</b><br>
-        No: <b>081234567890</b>
-    `);
-}
-
-function showInfo(html) {
-    const box = document.getElementById('infoBox');
-    box.innerHTML = html;
-    box.classList.remove('d-none');
-}
-
-document.getElementById('payBtn').addEventListener('click', function () {
-
-    if (!paymentMethod) {
-        alert('Pilih metode pembayaran!');
-        return;
-    }
-
-    // NON MIDTRANS
-    if (paymentMethod !== 'midtrans') {
-        alert('Silakan transfer sesuai informasi.');
-        window.location.href = "{{ route('orders.index') }}";
-        return;
-    }
-
-    // MIDTRANS
-    fetch("{{ route('checkout.pay', $product->id) }}", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": document.querySelector('meta[name=csrf-token]').content
-        },
-        body: JSON.stringify({
-            product_id: {{ $product->id }},
-            payment_method: 'midtrans'
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (!data.snap_token) {
-            alert('Gagal membuat transaksi');
-            return;
+            // Batasi quantity antara 1 dan stok tersedia
+            if (newQuantity >= 1 && newQuantity <= maxStock) {
+                quantityInput.value = newQuantity;
+                updateTotal(newQuantity);
+            }
         }
 
-        snap.pay(data.snap_token, {
-            onSuccess: function () {
-                window.location.href = "/payment/success/" + data.order_id;
-            },
-            onPending: function () {
-                window.location.href = "/payment/success/" + data.order_id;
-            },
-            onError: function () {
-                alert("Pembayaran gagal");
-            }
-        });
-    });
-});
-</script>
+        function updateTotal(quantity) {
+            const total = productPrice * quantity;
+            document.getElementById('displayQuantity').textContent = quantity;
+            document.getElementById('totalPrice').textContent = 'Rp ' + total.toLocaleString('id-ID');
+        }
 
+        // Handle form submit
+        document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnLoading = document.getElementById('btnLoading');
+            
+            submitBtn.disabled = true;
+            btnText.textContent = 'Memproses...';
+            btnLoading.style.display = 'inline-block';
+        });
+
+        // Update quantity saat input manual
+        document.getElementById('quantity').addEventListener('change', function() {
+            let value = parseInt(this.value);
+            if (value < 1) value = 1;
+            if (value > maxStock) value = maxStock;
+            this.value = value;
+            updateTotal(value);
+        });
+    </script>
 </body>
 </html>

@@ -19,8 +19,8 @@ class AuthController extends Controller
             return view('admin.login');
         }
 
-        // USER LOGIN (PAKAI VIEW YANG ADA)
-        return view('admin.login');
+        // USER LOGIN
+        return view('dashboard.login');
     }
 
     // =======================
@@ -65,7 +65,13 @@ class AuthController extends Controller
     // =======================
     public function registerForm()
     {
-        return view('admin.login'); // aman
+        // ADMIN REGISTER
+        if (request()->is('admin/*')) {
+            return view('admin.register');
+        }
+
+        // USER REGISTER
+        return view('dashboard.register');
     }
 
     public function register(Request $request)
@@ -74,8 +80,31 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8|confirmed',
+        ], [
+            'name.required' => 'Nama lengkap wajib diisi.',
+            'name.max' => 'Nama maksimal 255 karakter.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email sudah terdaftar.',
+            'password.required' => 'Kata sandi wajib diisi.',
+            'password.min' => 'Kata sandi minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
         ]);
 
+        // ===== ADMIN REGISTER =====
+        if ($request->is('admin/*')) {
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+                'is_admin' => 1, // Set as admin
+            ]);
+
+            Auth::login($user);
+            return redirect()->route('admin.dashboard')->with('success', 'Akun admin berhasil dibuat!');
+        }
+
+        // ===== USER REGISTER =====
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
@@ -83,7 +112,7 @@ class AuthController extends Controller
         ]);
 
         Auth::login($user);
-        return redirect()->route('home');
+        return redirect()->route('home')->with('success', 'Akun berhasil dibuat!');
     }
 
     // =======================
