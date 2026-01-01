@@ -9,11 +9,11 @@ return [
     */
 
     'postmark' => [
-        'key' => env('POSTMARK_API_KEY'),
+        'key' => env('POSTMARK_API_KEY', ''),
     ],
 
     'resend' => [
-        'key' => env('RESEND_API_KEY'),
+        'key' => env('RESEND_API_KEY', ''),
     ],
 
     'ses' => [
@@ -35,7 +35,7 @@ return [
     |--------------------------------------------------------------------------
     */
     'midtrans' => [
-    'server_key' => env('MIDTRANS_SERVER_KEY'),
+    'server_key' => env('MIDTRANS_SERVER_KEY', ''),
     'client_key' => env('MIDTRANS_CLIENT_KEY'),
     'is_production' => false,
     'is_sanitized' => true,

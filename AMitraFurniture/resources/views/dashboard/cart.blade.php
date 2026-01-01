@@ -86,10 +86,10 @@
                             <div class="card-body">
                                 <div class="row align-items-center">
                                     <div class="col-3 col-md-2">
-                                        @if($item['product']->image)
-                                            <img src="{{ asset($item['product']->image) }}" 
+                                        @if($item->product->image)
+                                            <img src="{{ asset($item->product->image) }}" 
                                                  class="img-fluid rounded" 
-                                                 alt="{{ $item['product']->name }}"
+                                                 alt="{{ $item->product->name }}"
                                                  style="height: 80px; object-fit: cover;">
                                         @else
                                             <img src="https://via.placeholder.com/80?text=No+Image" 
@@ -98,22 +98,22 @@
                                         @endif
                                     </div>
                                     <div class="col-9 col-md-4">
-                                        <h6 class="mb-1">{{ $item['product']->name }}</h6>
-                                        <small class="text-muted">{{ $item['product']->category }}</small>
+                                        <h6 class="mb-1">{{ $item->product->name }}</h6>
+                                        <small class="text-muted">{{ $item->product->category }}</small>
                                         <div class="mt-1">
                                             <span class="text-primary fw-bold">
-                                                Rp {{ number_format($item['product']->price, 0, ',', '.') }}
+                                                Rp {{ number_format($item->product->price, 0, ',', '.') }}
                                             </span>
                                         </div>
                                     </div>
                                     <div class="col-6 col-md-3 mt-2 mt-md-0">
-                                        <form action="{{ route('cart.update', $item['id']) }}" method="POST" class="d-flex align-items-center">
+                                        <form action="{{ route('cart.update', $item->id) }}" method="POST" class="d-flex align-items-center">
                                             @csrf
                                             @method('PATCH')
                                             <label class="me-2 small">Qty:</label>
                                             <input type="number" 
                                                    name="quantity" 
-                                                   value="{{ $item['quantity'] }}" 
+                                                   value="{{ $item->quantity }}" 
                                                    min="1" 
                                                    max="99"
                                                    class="form-control form-control-sm me-2" 
@@ -125,9 +125,9 @@
                                     </div>
                                     <div class="col-6 col-md-3 mt-2 mt-md-0 text-end">
                                         <div class="fw-bold text-primary mb-2">
-                                            Rp {{ number_format($item['subtotal'], 0, ',', '.') }}
+                                            Rp {{ number_format($item->product->price * $item->quantity, 0, ',', '.') }}
                                         </div>
-                                        <form action="{{ route('cart.remove', $item['id']) }}" method="POST" class="d-inline">
+                                        <form action="{{ route('cart.remove', $item->id) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Hapus produk dari keranjang?')">
@@ -196,7 +196,7 @@
                     </a>
                 </div>
                 <div class="col-3 bottom-nav-item">
-                    <a href="#" class="text-decoration-none text-dark">
+                    <a href="{{ route('profile.show') }}" class="text-decoration-none text-dark">
                         <i class="fas fa-user"></i>
                         <div class="small">Profile</div>
                     </a>

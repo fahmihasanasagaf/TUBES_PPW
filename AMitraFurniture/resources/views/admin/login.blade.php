@@ -33,6 +33,13 @@
                         </div>
                     @endif
 
+                    <div class="mt-3">
+                        <p class="text-muted small">Belum punya akun admin?</p>
+                        <a href="{{ route('admin.register') }}" class="btn btn-outline-primary w-100">
+                            Daftar Admin Baru
+                        </a>
+                    </div>
+
                 </div>
             </div>
         </div>

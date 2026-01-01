@@ -14,11 +14,16 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->text('alamat');
-            $table->string('nomor_telepon');
-            $table->enum('metode_pembayaran', ['transfer', 'cod']);
-            $table->enum('status', ['pending', 'diproses', 'selesai', 'dibatalkan'])->default('pending');
-            $table->decimal('total', 12, 2);
+            $table->foreignId('product_id')->nullable()->constrained()->onDelete('set null');
+            $table->string('order_code')->unique();
+            $table->integer('quantity')->default(1);
+            $table->decimal('total_price', 12, 2);
+            $table->string('payment_method')->nullable();
+            $table->enum('payment_status', ['pending', 'paid', 'failed'])->default('pending');
+            $table->enum('status', ['pending', 'processing', 'shipped', 'delivered', 'cancelled'])->default('pending');
+            $table->string('snap_token')->nullable();
+            $table->text('alamat')->nullable();
+            $table->string('nomor_telepon')->nullable();
             $table->timestamps();
         });
     }

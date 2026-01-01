@@ -159,7 +159,7 @@
                     </a>
                 </div>
                 <div @class(['col-3', 'bottom-nav-item'])>
-                    <a href="#" @class(['text-decoration-none', 'text-dark'])>
+                    <a href="{{ route('profile.show') }}" @class(['text-decoration-none', 'text-dark'])>
                         <i @class(['fas', 'fa-user'])></i>
                         <div @class(['small'])>Profile</div>
                     </a>
