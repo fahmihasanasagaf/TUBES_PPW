@@ -76,4 +76,49 @@ class AdminDashboardController extends Controller
             'monthlyStats'
         ));
     }
+
+    /**
+     * Show report with optional month parameter
+     */
+    public function report($bulan = null)
+    {
+        // Jika tidak ada parameter bulan, gunakan bulan saat ini
+        if (!$bulan) {
+            $bulan = now()->month;
+        }
+        
+        $year = now()->year;
+        
+        // Data pesanan untuk bulan tersebut
+        $orders = Order::whereYear('created_at', $year)
+                      ->whereMonth('created_at', $bulan)
+                      ->with(['user', 'orderItems.product'])
+                      ->get();
+        
+        // Total revenue bulan tersebut
+        $totalRevenue = $orders->where('payment_status', 'paid')->sum('total_price');
+        
+        // Total orders
+        $totalOrders = $orders->count();
+        
+        // Pesanan berdasarkan status
+        $ordersByStatus = [
+            'pending' => $orders->where('payment_status', 'pending')->count(),
+            'paid' => $orders->where('payment_status', 'paid')->count(),
+            'failed' => $orders->where('payment_status', 'failed')->count(),
+            'expired' => $orders->where('payment_status', 'expired')->count(),
+        ];
+        
+        $monthName = now()->month($bulan)->format('F');
+        
+        return view('admin.laporan', compact(
+            'orders',
+            'totalRevenue',
+            'totalOrders',
+            'ordersByStatus',
+            'bulan',
+            'monthName',
+            'year'
+        ));
+    }
 }

@@ -29,6 +29,10 @@ Route::middleware('guest')->group(function () {
 
     Route::get('/register', [AuthController::class, 'registerForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register'])->name('register.store');
+
+    // Google OAuth Routes
+    Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('auth.google');
+    Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])
@@ -44,6 +48,9 @@ Route::get('/produk', [ProductController::class, 'index'])->name('products.index
 Route::get('/produk/{slug}', [ProductController::class, 'show'])->name('products.show');
 Route::get('/kategori/{category}', [HomeController::class, 'category'])->name('category.show');
 Route::get('/produk/{id}/detail', [ProductController::class, 'detail'])->name('products.detail');
+
+// SEARCH WITH OPTIONAL PARAMETER
+Route::get('/search/{keyword?}', [ProductController::class, 'search'])->name('search');
 
 /*
 |--------------------------------------------------------------------------
@@ -80,6 +87,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::post('/orders/{order}/confirm-payment', [OrderController::class, 'confirmPayment'])->name('orders.confirmPayment');
+    
+    // FILTER ORDERS WITH OPTIONAL STATUS
+    Route::get('/orders/filter/{status?}', [OrderController::class, 'filter'])->name('orders.filter');
 
     Route::get('/payment/page/{order}', [OrderController::class, 'paymentPage'])
         ->name('payment.page');
@@ -124,6 +134,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // DASHBOARD + GRAFIK
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])
         ->name('admin.dashboard');
+    
+    // LAPORAN WITH OPTIONAL MONTH
+    Route::get('/admin/laporan/{bulan?}', [AdminDashboardController::class, 'report'])
+        ->name('admin.laporan');
 
     // PESANAN (UBAH STATUS)
     Route::get('/admin/pesanan', [AdminOrderController::class, 'index'])

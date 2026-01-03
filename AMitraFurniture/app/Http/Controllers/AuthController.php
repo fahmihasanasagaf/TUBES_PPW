@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use App\Models\User;
+use Laravel\Socialite\Facades\Socialite;
+use Exception;
 
 class AuthController extends Controller
 {
-    // =======================
-    // SHOW LOGIN FORM
-    // =======================
+    
     public function loginForm()
     {
         // ADMIN LOGIN
@@ -23,9 +24,7 @@ class AuthController extends Controller
         return view('dashboard.login');
     }
 
-    // =======================
-    // HANDLE LOGIN
-    // =======================
+    
     public function login(Request $request)
     {
         $request->validate([
@@ -33,7 +32,7 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
-        // ===== ADMIN LOGIN =====
+       
         if ($request->is('admin/*')) {
             if (Auth::attempt([
                 'email' => $request->email,
@@ -125,5 +124,93 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('home');
+    }
+
+    // =======================
+    // GOOGLE LOGIN
+    // =======================
+    
+    /**
+    
+     */
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->redirect();
+    }
+
+    /**
+     
+     */
+    public function handleGoogleCallback()
+    {
+        try {
+            // Get user info from Google
+            $googleUser = Socialite::driver('google')->user();
+
+            // Check if user already exists by google_id
+            $user = User::where('google_id', $googleUser->getId())->first();
+
+            if ($user) {
+                
+                Auth::login($user);
+                session()->regenerate();
+                return redirect()->route('home')->with('success', 'Berhasil login dengan Google!');
+            }
+
+            
+            $existingUser = User::where('email', $googleUser->getEmail())->first();
+
+            if ($existingUser) {
+                // Link Google account to existing user
+                $existingUser->update([
+                    'google_id' => $googleUser->getId(),
+                    'avatar' => $googleUser->getAvatar(),
+                ]);
+
+                Auth::login($existingUser);
+                session()->regenerate();
+                return redirect()->route('home')->with('success', 'Akun Google berhasil dihubungkan!');
+            }
+
+            // Create new user
+            $newUser = User::create([
+                'name' => $googleUser->getName(),
+                'email' => $googleUser->getEmail(),
+                'google_id' => $googleUser->getId(),
+                'avatar' => $googleUser->getAvatar(),
+                'email_verified_at' => now(),
+                'is_admin' => 0,
+            ]);
+
+            Auth::login($newUser);
+            session()->regenerate();
+            return redirect()->route('home')->with('success', 'Akun berhasil dibuat dengan Google!');
+
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $response = $e->getResponse();
+            $responseBody = $response->getBody()->getContents();
+            $data = json_decode($responseBody, true);
+            
+            Log::error('Google OAuth ClientException:', [
+                'status' => $response->getStatusCode(),
+                'body' => $responseBody
+            ]);
+            
+            $errorMsg = $data['error_description'] ?? $data['error'] ?? 'Gagal terhubung ke Google';
+            
+            return redirect()->route('login')->withErrors([
+                'google' => $errorMsg
+            ]);
+            
+        } catch (\Exception $e) {
+            // Log error untuk debugging
+            Log::error('Google OAuth Error: ' . $e->getMessage());
+            Log::error('Exception Type: ' . get_class($e));
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            
+            return redirect()->route('login')->withErrors([
+                'google' => 'Kesalahan: ' . $e->getMessage()
+            ]);
+        }
     }
 }

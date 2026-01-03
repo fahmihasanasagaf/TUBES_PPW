@@ -43,4 +43,21 @@ class ProductController extends Controller
     return view('dashboard.checkout', compact('product'));
 }
 
+    /**
+     * Search products with optional keyword
+     */
+    public function search($keyword = null)
+    {
+        if ($keyword) {
+            $products = Product::where('name', 'like', "%{$keyword}%")
+                              ->orWhere('description', 'like', "%{$keyword}%")
+                              ->orderBy('created_at', 'desc')
+                              ->paginate(12);
+        } else {
+            $products = Product::orderBy('created_at', 'desc')->paginate(12);
+        }
+        
+        return view('products.search', compact('products', 'keyword'));
+    }
+
 }

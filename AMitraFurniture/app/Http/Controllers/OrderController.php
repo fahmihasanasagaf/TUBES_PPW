@@ -383,9 +383,7 @@ class OrderController extends Controller
         }
     }
 
-    /* ==============================
-       LIST ORDER USER
-    ============================== */
+    
     public function index()
     {
         $orders = Order::where('user_id', Auth::id())
@@ -405,5 +403,26 @@ class OrderController extends Controller
         $order->load('orderItems.product');
         return view('dashboard.order-detail', compact('order'));
     }
-}
 
+    /**
+     
+     */
+    public function filter($status = null)
+    {
+        $query = Order::where('user_id', Auth::id())
+                     ->with('orderItems.product')
+                     ->latest();
+        
+        // Filter by status if provided
+        if ($status) {
+            $query->where('payment_status', $status);
+        }
+        
+        $orders = $query->paginate(10);
+        
+        // Available status options
+        $statuses = ['pending', 'paid', 'failed', 'expired'];
+        
+        return view('dashboard.order-filter', compact('orders', 'status', 'statuses'));
+    }
+}

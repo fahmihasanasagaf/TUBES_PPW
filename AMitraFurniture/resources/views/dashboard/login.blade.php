@@ -88,9 +88,15 @@
                         
                         <div class="row justify-content-center mb-4">
                             <div class="col-auto">
-                                <div class="social-login" onclick="alert('Fitur Google login belum tersedia')">
-                                    <i class="fab fa-google"></i>
-                                </div>
+                                @if(config('services.google.client_id') && config('services.google.client_id') != 'your-google-client-id.apps.googleusercontent.com')
+                                    <a href="{{ route('auth.google') }}" class="social-login" title="Login dengan Google">
+                                        <i class="fab fa-google"></i>
+                                    </a>
+                                @else
+                                    <div class="social-login" onclick="alert('Google OAuth belum dikonfigurasi. Silakan setup credentials di Google Cloud Console terlebih dahulu.\n\nLihat file GOOGLE_OAUTH_SETUP.md untuk panduan lengkap.')" style="opacity: 0.6; cursor: not-allowed;">
+                                        <i class="fab fa-google"></i>
+                                    </div>
+                                @endif
                             </div>
                             <div class="col-auto">
                                 <div class="social-login" onclick="alert('Fitur WhatsApp login belum tersedia')">
